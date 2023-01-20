@@ -6,6 +6,7 @@
 #include <Arduino.h>
 
 
+
 //------------ Fita de Led----------------                                                                                               
 #define DI0 34
 #define DI1 14

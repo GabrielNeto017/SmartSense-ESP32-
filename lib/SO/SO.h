@@ -7,6 +7,7 @@
 #include <definitions.h>
 #include <soc/rtc_wdt.h>
 #include <Pindefinitions.h>
+#include <DHT.h>
 
 
 

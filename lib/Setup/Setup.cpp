@@ -2,7 +2,6 @@
 #include <Setup.h>
 
 
-WiFiMQTTManager wmm(SW2, AP_PASSWORD);  // AP_PASSWORD is defined in the secrets.h file
 
 //MCP3909 - GAIN
 float G1, G0 = 1;
@@ -10,6 +9,7 @@ float G1, G0 = 1;
 void Setup_Init()
 {
 
+    WiFiMQTTManager wmm(SW2, AP_PASSWORD); 
     //Declaração de variáveis
     pinMode (DI0, INPUT);
     pinMode (DI1, INPUT);

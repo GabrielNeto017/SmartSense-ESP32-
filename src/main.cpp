@@ -12,16 +12,6 @@
 #include <DHT.h>
 
 
-//-------Sensor de °C e Umidade-----------
-#define DHTPIN 25
-#define DHTTYPE DHT11 
-DHT dht(DHTPIN, DHTTYPE);
-
-
-//------Definições Tasks----------------
-static uint8_t TaskCoreZero = 0;
-static uint8_t TaskCoreOne = 1;
-
 
 
 void setup() {
@@ -29,7 +19,6 @@ void setup() {
   Setup_Init();
   //FitaLed_Init();
   Wifi_init();
-  dht.begin();
   Analisador_Init();
   SO_Init();
    

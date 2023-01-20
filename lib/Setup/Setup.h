@@ -8,6 +8,8 @@
 #include <WiFiManager.h>
 
 
+
+
 void Setup_Init();
 void Wifi_init();
 void Analisador_Init();
