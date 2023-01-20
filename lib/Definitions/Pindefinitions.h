@@ -5,10 +5,6 @@
 
 #include <Arduino.h>
 
-//-------Sensor de °C e Umidade-----------
-#define DHTPIN 25
-#define DHTTYPE DHT11 
-DHT dht(DHTPIN, DHTTYPE);
 
 //------------ Fita de Led----------------                                                                                               
 #define DI0 34
