@@ -11,10 +11,11 @@
 
 
 void Setup_Init();
-void Wifi_init();
+void Setup_Init2();
+//void Wifi_init();
+void wmm_loop();
 void Analisador_Init();
-void subscribeTo();
-void subscriptionCallback(char* topic, byte* message, unsigned int length);
+
 
 
 #endif

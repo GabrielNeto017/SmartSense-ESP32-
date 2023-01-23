@@ -1,6 +1,8 @@
 #include <SO.h>
 
-WiFiMQTTManager wmm2(SW2, AP_PASSWORD); 
+
+//WiFiMQTTManager wmm(SW2, AP_PASSWORD); 
+WiFiMQTTManager wmm(SW2, AP_PASSWORD); 
 
 //-------Sensor de °C e Umidade-----------
 #define DHTPIN 25
@@ -43,6 +45,61 @@ static int habilitaPIN = 0;
 int ch1[15];
 int ch0[15];
 
+void Wifi_init()
+{
+     //---------------------------------------------
+    //STATIC IP
+    /*IPAddress local_IP(192, 168, 150, 19);   /////////////////////////////// mudar o ip da planta
+    IPAddress gateway(192, 168, 150, 1);
+
+    IPAddress subnet(255, 255, 0, 0);
+    IPAddress primaryDNS(8, 8, 8, 8);   //optional
+    IPAddress secondaryDNS(0, 0, 0, 0); //optional
+
+    // Configures static IP address
+    if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+    Serial.println("STA Failed to configure");
+    }*/
+    //-----------------------------------------------------------
+
+
+
+    //WIFI-MQTT config
+    Serial.println(F("WiFiMQTTManager Basic Example"));
+    wmm.subscribeTo = subscribeTo;
+    wmm.setup(__SKETCH_NAME__);
+    wmm.client->setCallback(subscriptionCallback);
+}
+
+
+// optional function to subscribe to MQTT topics
+void subscribeTo() {
+  Serial.println("subscribing to some topics...");  
+  // subscribe to some topic(s)
+  char topic[100];
+  snprintf(topic, sizeof(topic), "%s%s%s", "switch/", wmm.deviceId, "/TESTE");
+  wmm.client->subscribe(topic);
+}
+
+// optional function to process MQTT subscribed to topics coming in
+void subscriptionCallback(char* topic, byte* message, unsigned int length) 
+{
+  Serial.print("Message arrived on topic: ");
+  Serial.print(topic);
+  Serial.print(". Message: ");
+  String messageTemp;
+  
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)message[i]);
+    messageTemp += (char)message[i];
+  }
+  Serial.println();
+
+  //if (String(topic) == "switch/esp1234/led1/output") {
+  //  Serial.print("Changing led1 output to ");
+  //}
+}
+
 
 void FitaLed_Init()
 {
@@ -60,79 +117,78 @@ void FitaLed_Init()
 void SO_Init()
 {
 
-    dht.begin();
+    //dht.begin();
+
     //INICIALIZANDO TASKS CORE 0
-    xTaskCreatePinnedToCore(
-                FeedWatchdog,
-                "FeedWatchdog",
-                1000,
-                NULL,
-                0,
-                NULL,
-                TaskCoreZero);
-    delay(300);
+   xTaskCreatePinnedToCore(
+             FeedWatchdog,
+             "FeedWatchdog",
+             1000,
+             NULL,
+             0,
+             NULL,
+             TaskCoreZero);
+  delay(300);
 
-    xTaskCreatePinnedToCore(
-                DHT11e,
-                "DHT11e",
-                1500,
-                NULL,
-                1,
-                NULL,
-                TaskCoreZero);
-    delay(300);
+  xTaskCreatePinnedToCore(
+             DHT11e,
+             "DHT11e",
+             1500,
+             NULL,
+             1,
+             NULL,
+             TaskCoreZero);
+   delay(300);
 
-    xTaskCreatePinnedToCore(
-                EntradasAnalogicas,
-                "EntradasAnalogicas",
-                2000,
-                NULL,
-                8,
-                NULL,
-                TaskCoreZero);
-    delay(300);
-
-
+   xTaskCreatePinnedToCore(
+             EntradasAnalogicas,
+             "EntradasAnalogicas",
+             2000,
+             NULL,
+             8,
+             NULL,
+             TaskCoreZero);
+  delay(300);
 
 
-    xTaskCreatePinnedToCore(
-                subs,
-                "subs",
-                5000,
-                NULL,
-                10,
-                NULL,
-                TaskCoreZero);
-    delay(300);
 
 
-    //INICIALIZANDO TASKS CORE 1
-    xTaskCreatePinnedToCore(
-                Analisador,
-                "Analisador",
-                
-                10000,
-                NULL,
-                9,
-                NULL,
-                TaskCoreOne);
-    delay(300);
+  xTaskCreatePinnedToCore(
+             subs,
+             "subs",
+             5000,
+             NULL,
+             10,
+             NULL,
+             TaskCoreZero);
+  delay(300);
+
+
+  //INICIALIZANDO TASKS CORE 1
+   xTaskCreatePinnedToCore(
+             Analisador,
+             "Analisador",
+             
+             10000,
+             NULL,
+             9,
+             NULL,
+             TaskCoreOne);
+  delay(300);
 }
 
 
 
-void FeedWatchdog(void * pvParameters)
-{
-    while(true) 
-    {
+
+void FeedWatchdog(void * pvParameters){
+    while(true) {
       rtc_wdt_feed();
       vTaskDelay(pdMS_TO_TICKS(100));
-    }
+  }
 }
 
-void DHT11e(void * pvParameters)
-{
-  while(true){
+void DHT11e(void * pvParameters){
+  for(;;){
       // Reading temperature or humidity takes about 250 milliseconds!
     // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
     h = dht.readHumidity();
@@ -156,10 +212,9 @@ void DHT11e(void * pvParameters)
 }
 
 void FitaLed(void * pvParameters){
-  while(true){
+  for(;;){
      
-    if(digitalRead(SW1)==0 && statusled!=6 && flag2==1)
-    {
+    if(digitalRead(SW1)==0 && statusled!=6 && flag2==1){
       for(int i = 0; i<20; i++)
         {
             delay(100);
@@ -174,21 +229,18 @@ void FitaLed(void * pvParameters){
         }
     }
 
-    else if(digitalRead(SW1)==1)
-    {
+    else if(digitalRead(SW1)==1){
       count1 = 0;
       flag2 = 1;
     }
 
-    else if(statusled==6 && digitalRead(SW1)==0 && count1 == 0 && flag2 == 1)
-    {
+    else if(statusled==6 && digitalRead(SW1)==0 && count1 == 0 && flag2 == 1){
       flag=0;
       flag2 = 0;
     }
 
 
-    if(flag==0)
-    {
+    if(flag==0){
     //0 = acionado c/ nível lógico alto   1 = desacionado
     if(digitalRead(DI0) == 0) statusled = 1;
     else if((digitalRead(DI0) == 1) && (digitalRead(DI1) == 1) && (digitalRead(DI2) == 1) && (digitalRead(DI3) == 1)) statusled = 2;
@@ -200,11 +252,10 @@ void FitaLed(void * pvParameters){
     else if((digitalRead(DI0) == 1) && (digitalRead(DI1) == 0) && (digitalRead(DI2) == 0) && (digitalRead(DI3) == 1)) statusled = 4;
     else if((digitalRead(DI0) == 1) && (digitalRead(DI1) == 0) && (digitalRead(DI2) == 0) && (digitalRead(DI3) == 0)) statusled = 5;
     
-    else
-    {
+    else{
       statusled = statusled;
+      }
     }
-     }
     
 
     if(statusled==1){
@@ -269,7 +320,7 @@ void FitaLed(void * pvParameters){
 } //FIM DA FUNÇÃO
 
 void EntradasAnalogicas(void * pvParameters){
-  while(true){
+  for(;;){
       leituraAI0 = analogRead(AI0);
       leituraAI1 = analogRead(AI1);
       
@@ -282,8 +333,9 @@ void EntradasAnalogicas(void * pvParameters){
 }
 
 void Analisador(void * pvParameters){
-  while(true){
-  wmm2.loop();
+  for(;;){
+  //wmm_loop();
+  wmm.loop();
   if(habilitaPIN<=2){
       habilitaPIN++;
      
@@ -517,45 +569,47 @@ void Analisador(void * pvParameters){
   }
 }
 
-void subs(void * pvParameters){
-  while(true){
+
+void subs(void * pvParameters)
+{
+  for(;;){
 
     //-----------------------------------------------------------------------------------------
     //DHT11
     String post8 = String("[{\"variable\":\"humi\",\"value\":")+String(h)+String("}]");
-    wmm2.client->publish("\\smart4.0", post8.c_str(), true);
+    wmm.client->publish("\\smart4.0", post8.c_str(), true);
   
     String post9 = String("[{\"variable\":\"temp\",\"value\":")+String(t)+String("}]");
-    wmm2.client->publish("\\smart4.0", post9.c_str(), true);
+    wmm.client->publish("\\smart4.0", post9.c_str(), true);
   
     //-----------------------------------------------------------------------------------------
     
     //AI0
     String post = String("[{\"variable\":\"ai00\",\"value\":")+String(leituraAI0)+String("}]");
-    wmm2.client->publish("\\smart4.0", post.c_str(), true);
+    wmm.client->publish("\\smart4.0", post.c_str(), true);
   
     //AI1
     String post2 = String("[{\"variable\":\"ai01\",\"value\":")+String(leituraAI1)+String("}]");
-    wmm2.client->publish("\\smart4.0", post2.c_str(), true);
+    wmm.client->publish("\\smart4.0", post2.c_str(), true);
 
     //-----------------------------------------------------------------------------------------
 
   
     //ANALISADOR
     String post3 = String("[{\"variable\":\"vrms\",\"value\":")+String(VRMS)+String("}]");
-    wmm2.client->publish("\\smart4.0", post3.c_str(), true);
+    wmm.client->publish("\\smart4.0", post3.c_str(), true);
   
     String post4 = String("[{\"variable\":\"irms\",\"value\":")+String(IRMS)+String("}]");
-    wmm2.client->publish("\\smart4.0", post4.c_str(), true);
+    wmm.client->publish("\\smart4.0", post4.c_str(), true);
   
     String post5 = String("[{\"variable\":\"appp\",\"value\":")+String(P_aparente)+String("}]");
-    wmm2.client->publish("\\smart4.0", post5.c_str(), true);
+    wmm.client->publish("\\smart4.0", post5.c_str(), true);
   
     String post6 = String("[{\"variable\":\"actp\",\"value\":")+String(P_ativa)+String("}]");
-    wmm2.client->publish("\\smart4.0", post6.c_str(), true);
+    wmm.client->publish("\\smart4.0", post6.c_str(), true);
   
     String post7 = String("[{\"variable\":\"reap\",\"value\":")+String(P_reativa)+String("}]");
-    wmm2.client->publish("\\smart4.0", post7.c_str(), true);
+    wmm.client->publish("\\smart4.0", post7.c_str(), true);
 
     //-----------------------------------------------------------------------------------------
 
@@ -568,7 +622,7 @@ void subs(void * pvParameters){
       //avol = 
 
       String post12 = String("[{\"variable\":\"cons\",\"value\":")+String(kWh)+String("}]");
-      wmm2.client->publish("\\smart4.0", post12.c_str(), true);
+      wmm.client->publish("\\smart4.0", post12.c_str(), true);
   
       //String post13 = String("[{\"variable\":\"avol\",\"value\":")+String(avol)+String("}]");
       //wmm.client->publish("\\smart4.0", post13.c_str(), true);
@@ -583,11 +637,9 @@ void subs(void * pvParameters){
     if(csts != ESTADO){
         //ESTADOS
         String post10 = String("[{\"variable\":\"psts\",\"value\":")+String(ESTADO)+String("}]");
-        wmm2.client->publish("\\smart4.0", post10.c_str(), true);
+        wmm.client->publish("\\smart4.0", post10.c_str(), true);
         csts = ESTADO;
     }
     vTaskDelay(5000 / portTICK_PERIOD_MS);
   }
 }
-
-

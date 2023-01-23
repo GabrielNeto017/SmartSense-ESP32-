@@ -4,8 +4,8 @@
   Written by David Reed hashmark47@gmail.com
   GNU license  
 */
-#ifndef _WIFIMQTTMANAGER_H
-#define _WIFIMQTTMANAGER_H
+#ifndef WiFiMQTTManager_h
+#define WiFiMQTTManager_h
 
 //#define MQTT_MAX_PACKET_SIZE 512
 

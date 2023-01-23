@@ -9,9 +9,13 @@
 #include <Pindefinitions.h>
 #include <DHT.h>
 #include <WiFiMQTTManager.h>
+#include <WiFiManager.h>
 
-
+void Wifi_init();
 void FitaLed_Init();
 void SO_Init();
+
+void subscribeTo();
+void subscriptionCallback(char* topic, byte* message, unsigned int length);
 
 #endif

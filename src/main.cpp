@@ -12,12 +12,13 @@
 #include <SO.h>
 #include <DHT.h>
 
-
 void setup() {
 
+  setCpuFrequencyMhz(240);
   Setup_Init();
   FitaLed_Init();
   Wifi_init();
+  Setup_Init2();
   Analisador_Init();
   SO_Init();
    
