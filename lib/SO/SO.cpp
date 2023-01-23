@@ -1,5 +1,6 @@
 #include <SO.h>
 
+WiFiMQTTManager wmm2(SW2, AP_PASSWORD); 
 
 //-------Sensor de °C e Umidade-----------
 #define DHTPIN 25
@@ -14,6 +15,7 @@ static uint8_t TaskCoreOne = 1;
 //------Variáveis de Processo----------
 int statusled;
 String ESTADO, csts = "Hello";
+
 
 int flag = 0;
 int flag2 = 1;
@@ -281,7 +283,7 @@ void EntradasAnalogicas(void * pvParameters){
 
 void Analisador(void * pvParameters){
   while(true){
-  wmm.loop();
+  wmm2.loop();
   if(habilitaPIN<=2){
       habilitaPIN++;
      
@@ -521,39 +523,39 @@ void subs(void * pvParameters){
     //-----------------------------------------------------------------------------------------
     //DHT11
     String post8 = String("[{\"variable\":\"humi\",\"value\":")+String(h)+String("}]");
-    wmm.client->publish("\\smart4.0", post8.c_str(), true);
+    wmm2.client->publish("\\smart4.0", post8.c_str(), true);
   
     String post9 = String("[{\"variable\":\"temp\",\"value\":")+String(t)+String("}]");
-    wmm.client->publish("\\smart4.0", post9.c_str(), true);
+    wmm2.client->publish("\\smart4.0", post9.c_str(), true);
   
     //-----------------------------------------------------------------------------------------
     
     //AI0
     String post = String("[{\"variable\":\"ai00\",\"value\":")+String(leituraAI0)+String("}]");
-    wmm.client->publish("\\smart4.0", post.c_str(), true);
+    wmm2.client->publish("\\smart4.0", post.c_str(), true);
   
     //AI1
     String post2 = String("[{\"variable\":\"ai01\",\"value\":")+String(leituraAI1)+String("}]");
-    wmm.client->publish("\\smart4.0", post2.c_str(), true);
+    wmm2.client->publish("\\smart4.0", post2.c_str(), true);
 
     //-----------------------------------------------------------------------------------------
 
   
     //ANALISADOR
     String post3 = String("[{\"variable\":\"vrms\",\"value\":")+String(VRMS)+String("}]");
-    wmm.client->publish("\\smart4.0", post3.c_str(), true);
+    wmm2.client->publish("\\smart4.0", post3.c_str(), true);
   
     String post4 = String("[{\"variable\":\"irms\",\"value\":")+String(IRMS)+String("}]");
-    wmm.client->publish("\\smart4.0", post4.c_str(), true);
+    wmm2.client->publish("\\smart4.0", post4.c_str(), true);
   
     String post5 = String("[{\"variable\":\"appp\",\"value\":")+String(P_aparente)+String("}]");
-    wmm.client->publish("\\smart4.0", post5.c_str(), true);
+    wmm2.client->publish("\\smart4.0", post5.c_str(), true);
   
     String post6 = String("[{\"variable\":\"actp\",\"value\":")+String(P_ativa)+String("}]");
-    wmm.client->publish("\\smart4.0", post6.c_str(), true);
+    wmm2.client->publish("\\smart4.0", post6.c_str(), true);
   
     String post7 = String("[{\"variable\":\"reap\",\"value\":")+String(P_reativa)+String("}]");
-    wmm.client->publish("\\smart4.0", post7.c_str(), true);
+    wmm2.client->publish("\\smart4.0", post7.c_str(), true);
 
     //-----------------------------------------------------------------------------------------
 
@@ -566,7 +568,7 @@ void subs(void * pvParameters){
       //avol = 
 
       String post12 = String("[{\"variable\":\"cons\",\"value\":")+String(kWh)+String("}]");
-      wmm.client->publish("\\smart4.0", post12.c_str(), true);
+      wmm2.client->publish("\\smart4.0", post12.c_str(), true);
   
       //String post13 = String("[{\"variable\":\"avol\",\"value\":")+String(avol)+String("}]");
       //wmm.client->publish("\\smart4.0", post13.c_str(), true);
@@ -581,7 +583,7 @@ void subs(void * pvParameters){
     if(csts != ESTADO){
         //ESTADOS
         String post10 = String("[{\"variable\":\"psts\",\"value\":")+String(ESTADO)+String("}]");
-        wmm.client->publish("\\smart4.0", post10.c_str(), true);
+        wmm2.client->publish("\\smart4.0", post10.c_str(), true);
         csts = ESTADO;
     }
     vTaskDelay(5000 / portTICK_PERIOD_MS);

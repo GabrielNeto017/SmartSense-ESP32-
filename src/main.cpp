@@ -1,8 +1,9 @@
 /*
 * SMART SENSE
-* Autor do projeto: Gabriel Luiz B. Neto
+* Autor: Gabriel Luiz B. Neto
 * 
 */
+
 #include <WiFiMQTTManager.h>
 #include <soc/rtc_wdt.h>
 #include <definitions.h>
@@ -12,12 +13,10 @@
 #include <DHT.h>
 
 
-
-
 void setup() {
 
   Setup_Init();
-  //FitaLed_Init();
+  FitaLed_Init();
   Wifi_init();
   Analisador_Init();
   SO_Init();

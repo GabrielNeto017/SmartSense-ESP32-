@@ -5,11 +5,12 @@
 
 //MCP3909 - GAIN
 float G1, G0 = 1;
+WiFiMQTTManager wmm(SW2, AP_PASSWORD); 
 
 void Setup_Init()
 {
 
-    WiFiMQTTManager wmm(SW2, AP_PASSWORD); 
+
     //Declaração de variáveis
     pinMode (DI0, INPUT);
     pinMode (DI1, INPUT);

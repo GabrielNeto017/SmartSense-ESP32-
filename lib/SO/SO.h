@@ -8,7 +8,7 @@
 #include <soc/rtc_wdt.h>
 #include <Pindefinitions.h>
 #include <DHT.h>
-
+#include <WiFiMQTTManager.h>
 
 
 void FitaLed_Init();
